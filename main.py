@@ -4,7 +4,7 @@ from bs4 import BeautifulSoup
 from datetime import datetime
 from time import sleep
 
-HEADER = {"User-Agent" : "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/95.0.4638.69 Safari/537.36"}
+HEADER = {"User-Agent" : "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"}
 # Cambiar URL
 URL = "https://store.steampowered.com/app/768520/Red_Solstice_2_Survivors/"
 # Cambiar Nombre
@@ -19,11 +19,11 @@ def mailTo(msg):
     mail = EmailMessage()
     mail.set_content(f"{msg}")
     mail["Subject"] = f"{GAME} - STEAM"
-    mail["From"] = "fcabrera.all.business@gmail.com"
-    mail["To"] = "fcabrera.all@gmail.com"
+    mail["From"] = "xxxxxxx@gmail.com"
+    mail["To"] = "xxxxxxx@gmail.com"
     server = smtplib.SMTP("smtp.gmail.com", 587)
     server.starttls()
-    server.login("fcabrera.all.business@gmail.com", "BR0wN1087")
+    server.login("xxxxxx@gmail.com", "XXXXXX")
     server.send_message(mail)
     server.quit()
 
@@ -65,20 +65,15 @@ def main():
         open("price.txt")
     except FileNotFoundError:
         writeFile(getPrice())
-    #i=0
     while(True):
         print(f"\n[*] Buscando cambios en el precio de: '{GAME}'")
         old_price = readFile()
         new_price = getPrice()
-        #if i == 2:
-        #    new_price=199.59
         if float(new_price) < float(old_price):
             msg = f"[ ! ] El precio de '{GAME}' ha bajado: " + "\n[+] Precio anterior: ARS$ " + str(old_price) + "\n[+] Precio ACTUAL: ARS$ " + str(new_price) + "\n" + "[+] URL: " + str(URL)
             mailTo(msg)
             hora = str(datetime.today().hour)+":"+str(datetime.today().minute)
-            print(f"\n[*] El precio de '{GAME}' ha bajado. \n[+] Email enviado a: fcabrera.all@gmail.com \n[+] Hora: {hora}")
-        #i+=1
-        #sleep(5)
+            print(f"\n[*] El precio de '{GAME}' ha bajado. \n[+] Email enviado a: xxxxxxxxxxxx@gmail.com \n[+] Hora: {hora}")
         sleep(7200) 
 
 if __name__ == "__main__":
