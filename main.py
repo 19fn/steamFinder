@@ -1,80 +1,72 @@
-import requests, signal, smtplib
-from email.message import EmailMessage
+import requests, signal, re
+import mysql.connector
 from bs4 import BeautifulSoup
 from datetime import datetime
 from time import sleep
 
-HEADER = {"User-Agent" : "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"}
+HEADER = {"User-Agent" : "Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:47.0) Gecko/20100101 Firefox/47.0"}
 # Cambiar URL
-URL = "https://store.steampowered.com/app/768520/Red_Solstice_2_Survivors/"
+URL = "https://store.steampowered.com/app/1402320/Medal_of_Honor_Above_and_Beyond/"
 # Cambiar Nombre
-GAME = "red solstice 2 survivors".upper()
+GAME = "Medal of honor Above and Beyond".upper()
+
+mydb = mysql.connector.connect( host="172.24.35.232",
+                                user="admin",
+                                password="SteamFinder2022",
+                                database="steamfinder_db")
+mycursor = mydb.cursor()
 
 def ctrl_c(sig, frame):
     print("\n[!] Se presionó (ctrl_c) saliendo...")
     exit()
 signal.signal(signal.SIGINT, ctrl_c)
 
-def mailTo(msg):
-    mail = EmailMessage()
-    mail.set_content(f"{msg}")
-    mail["Subject"] = f"{GAME} - STEAM"
-    mail["From"] = "xxxxxxx@gmail.com"
-    mail["To"] = "xxxxxxx@gmail.com"
-    server = smtplib.SMTP("smtp.gmail.com", 587)
-    server.starttls()
-    server.login("xxxxxx@gmail.com", "XXXXXX")
-    server.send_message(mail)
-    server.quit()
-
 def getPrice():
     page = requests.get(URL, headers=HEADER)
     soup = BeautifulSoup(page.content, "lxml")
-    get_price = soup.find("div", {"class" : "game_purchase_price price"})
-    get_desc_price = soup.find("div", {"class" : "discount_final_price"})
-    if get_desc_price:
-        get_dsc_price = get_desc_price.get_text()
-        desc_price = get_dsc_price.strip()
-        desc_price = desc_price[5:]
-        desc_price = desc_price.replace(".","")
-        desc_price = desc_price.replace(",",".")
-        return desc_price
+    get_price = soup.find("div", {"class" : "game_purchase_action"})
     if get_price:
-        get_price = get_price.get_text()
-        price = get_price.strip()
-        price = price[5:]
-        price = price.replace(".","")
-        price = price.replace(",",".")
-        return get_price
+        price = get_price.get_text()
+        price = price.strip()
+        price = re.findall('(?:\d+\.)?\d+,\d+', price)
+        format_price = price[0].replace(".","")
+        final_price = format_price.replace(",",".")
+    return final_price
 
-def readFile():
-    file = open("price.txt", "r")
-    if file.mode == "r":
-        price = file.read()
-    file.close
-    return price
+def loadPrice(price):
+    # Getting the current date and time
+    dt = datetime.now()
+    sql = "INSERT INTO Price (game, price, date) VALUES (%s, %s, %s)"
+    val = (f"{GAME}", f"{price}", f"{dt}")
+    mycursor.execute(sql, val)
+    mydb.commit()
+    return print("Price added to database.")
 
-def writeFile(price):
-    file = open("price.txt", "w")
-    if file.mode == "w":
-        file.write(price)
-    file.close
+def minPrice():
+    sql = f"SELECT MIN(price) as min_price from Price WHERE game = '{GAME}'"
+    mycursor.execute(sql)
+    myresult = mycursor.fetchone()
+    return myresult[0]
 
 def main():
     try:
-        open("price.txt")
-    except FileNotFoundError:
-        writeFile(getPrice())
+        loadPrice(getPrice())
+    except ConnectionError:
+        print("[!] Error connecting to database.")
+        exit
     while(True):
         print(f"\n[*] Buscando cambios en el precio de: '{GAME}'")
-        old_price = readFile()
         new_price = getPrice()
-        if float(new_price) < float(old_price):
-            msg = f"[ ! ] El precio de '{GAME}' ha bajado: " + "\n[+] Precio anterior: ARS$ " + str(old_price) + "\n[+] Precio ACTUAL: ARS$ " + str(new_price) + "\n" + "[+] URL: " + str(URL)
-            mailTo(msg)
-            hora = str(datetime.today().hour)+":"+str(datetime.today().minute)
-            print(f"\n[*] El precio de '{GAME}' ha bajado. \n[+] Email enviado a: xxxxxxxxxxxx@gmail.com \n[+] Hora: {hora}")
-        sleep(7200) 
+        old_price = minPrice()
+        print(float(old_price))
+        if float(new_price) == float(old_price):
+            print("[+] Price has no changed.")
+        elif float(new_price) < float(old_price):
+            print(f"[+] Price has changed and now is: ${new_price} ARS")
+        sleep(5) 
 
 if __name__ == "__main__":
     main()
+    #print(getPrice())
+    #loadPrice(getPrice())
+    #print(minPrice())
