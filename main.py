@@ -1,4 +1,4 @@
-import requests, signal, re
+import requests, signal, re, os
 import mysql.connector
 from bs4 import BeautifulSoup
 from datetime import datetime
@@ -10,7 +10,7 @@ URL = "https://store.steampowered.com/app/1402320/Medal_of_Honor_Above_and_Beyon
 # Cambiar Nombre
 GAME = "Medal of honor Above and Beyond".upper()
 
-mydb = mysql.connector.connect( host="172.24.35.232",
+mydb = mysql.connector.connect( host="172.18.25.8",
                                 user="admin",
                                 password="SteamFinder2022",
                                 database="steamfinder_db")
@@ -40,7 +40,6 @@ def loadPrice(price):
     val = (f"{GAME}", f"{price}", f"{dt}")
     mycursor.execute(sql, val)
     mydb.commit()
-    return print("Price added to database.")
 
 def minPrice():
     sql = f"SELECT MIN(price) as min_price from Price WHERE game = '{GAME}'"
@@ -50,23 +49,24 @@ def minPrice():
 
 def main():
     try:
-        loadPrice(getPrice())
+        while(True):
+            loadPrice(getPrice())
+            print(f"\n[*] Searching changes in game price: '{GAME}'")
+            new_price = getPrice()
+            old_price = minPrice()
+            price_list = []
+            price_list.extend([float(new_price),float(old_price)])
+            price_list.sort()
+            if float(new_price) == float(price_list[0]):
+                print("[+] Price has no changed.", end="", flush=True)
+            elif float(price_list[0]) < float(new_price):
+                print(f"[+] Price has changed and now is: ${old_price} ARS", end="", flush=True)
+                break
+            sleep(60)
+            os.system('cls')
     except ConnectionError:
         print("[!] Error connecting to database.")
         exit
-    while(True):
-        print(f"\n[*] Buscando cambios en el precio de: '{GAME}'")
-        new_price = getPrice()
-        old_price = minPrice()
-        print(float(old_price))
-        if float(new_price) == float(old_price):
-            print("[+] Price has no changed.")
-        elif float(new_price) < float(old_price):
-            print(f"[+] Price has changed and now is: ${new_price} ARS")
-        sleep(5) 
 
 if __name__ == "__main__":
     main()
-    #print(getPrice())
-    #loadPrice(getPrice())
-    #print(minPrice())
