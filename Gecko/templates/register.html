@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>{% block title %}Home - CoinGecko{% endblock %}</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.8/css/all.css" integrity="sha384-3AB7yXWz4OeoZcPbieVW64vVXEwADiYyAEhwilzWsLw+9FgqpyjjStpPnpBO8o8S" crossorigin="anonymous">
+    
+    <style>
+      /* Remove the navbar's default rounded borders and increase the bottom margin */ 
+      .navbar {
+        margin-bottom: 10px;
+        border-radius: 0;
+      }
+
+      .jumbotron {
+        margin-bottom: 0;
+        padding-top: 30px;
+        padding-bottom: 20px;
+        background-color: white;
+      }
+
+      .container {
+        color: black;
+      }
+      
+      /* Add a navy blue background color and some padding to the footer */
+      footer {
+        background-color: #1e2969;
+        padding: 15px;
+      }
+      .img-fluid {
+        max-width: 100%;
+        height: auto;
+      }
+    </style>
+  </head>
+ 
+    <body style="background-color: lightgray;">
+        <body style="margin-top: 5rem;">
+            <div class="container" style="margin-bottom: 2rem; margin-top: 4rem;">
+              <div class="row">
+                <div class="col-sm-12">
+                  <p style="font-weight: 900; font-size: 39px; text-align: center; color: #1e2969;">
+                    PRIMERA VEZ EN COINGECKO.
+                  </p>
+                  <p style="font-weight: 900; font-size: 39px; text-align: center; color: #1e2969;">
+                    COMENCEMOS.
+                  </p>
+                </div> 
+              </div>
+              <div class="row">
+                <div class="col-sm-3"></div>
+                <div class="col-sm-6" style="margin-top: 2rem;">
+                  <p style="font-family: Arial; font-size: 25px; text-align: center;">
+                    Ingrese su información de contacto o inicie sesión, si ya tiene una cuenta.
+                  </p>
+                </div>
+              </div>
+            </div>
+          
+            <div class="container">
+                <form class="form-register" method="POST">
+                    {{ form.hidden_tag() }}
+                    <div class="form-outline mb-4">
+                      <div class="col-sm-3"></div>
+                      <div class="col-sm-6" style="background-color: rgb(236,236,236); padding: 6rem;">
+                        {{ form.nombre.label() }}
+                        {{ form.nombre(class="form-control", placeholder="Nombre") }}
+                        <br>
+                        {{ form.username.label() }}
+                        {{ form.username(class="form-control", placeholder="Nombre de Usuario") }}
+                        <br>
+                        {{ form.email.label() }}
+                        {{ form.email(class="form-control", placeholder="Correo Electronico")}}
+                        <br>
+                        {{ form.password.label() }}
+                        {{ form.password(class="form-control", placeholder="Contraseña") }}
+                        <br>
+                        {{ form.password_confirmation.label() }}
+                        {{ form.password_confirmation(class="form-control", placeholder="Repetir Contraseña")}}
+                        <br>
+                        <div class="form-check d-flex justify-content-center mb-4">
+                          <label class="form-check-label">
+                            {{ form.acepto_terminos(class="form-check-input") }} {{ form.acepto_terminos.label() }} <a href="#">Terminos & Condiciones</a>  
+                          </label>
+                          <br>
+                          <label for="">
+                            <a style="color: black;" href="">Ya tengo una cuenta</a>
+                          </label>
+                        </div>
+          
+                        <br>
+                        {{ form.submit(class="btn btn-primary btn-block", style="background-color: #1e2969") }}
+                      </div>
+                      <br>
+                    </div>
+                  </form>
+            </div>
+            <br><br>
+          </body>
+    </body>
+</html>
