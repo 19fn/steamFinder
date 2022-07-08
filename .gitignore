@@ -1,4 +1,4 @@
 # virtual environment
 venv
 # cache
-Gecko/__pycache__/
+finder/Gecko/__pycache__/

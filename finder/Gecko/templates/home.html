@@ -1,0 +1,98 @@
+{% extends "layout.html" %}
+
+{% block title %}Home - steamFinder{% endblock %}
+
+{% block navbrand%}
+<div class="container col-sm-6">
+  <nav class="navbar-center navbar-expand-sm navbar-inverse navbar-fixed-top" style="background-color: #000000;">
+      <div class="container-fluid">
+          <div class="navbar-header center">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>                        
+              </button>
+              <b>
+                <a class="navbar-brand" style="color: #c09506;" href="/">STEAM</a>
+                <a class="navbar-brand" style="color: #9d1212;" href="/">FINDER</a>
+              </b>
+          </div>
+          <div class="collapse navbar-collapse" id="myNavbar" style="font-size: 16px;">
+              <ul class="nav navbar-nav">
+              </ul>
+              {% if current_user.is_authenticated %}
+                      <ul class="nav navbar-nav navbar-right">
+                          <li class="nav-item"><a class="nav-link" href="{{ url_for('home_page') }}"><span class="glyphicon glyphicon-home"></span> Home</a></li>
+                          <li class="nav-item"><a class="nav-link" href="{{ url_for('dashboard_page') }}"><span class="glyphicon glyphicon-list"></span> Dashboard</a></li>                          
+                          <li class="nav-item"><a class="nav-link" href="{{ url_for('profile_page') }}"><span class="glyphicon glyphicon-user"></span> Profile</a></li>
+                          <li class="nav-item"><a class="nav-link" href="{{ url_for('logout_page')}}"><span class="glyphicon glyphicon-log-out"></span> Leave</a></li>
+                      </ul>
+              {% else %}
+                      <ul class="nav navbar-nav navbar-right">
+                          <li class="nav-item"><a class="nav-link" href="{{ url_for('home_page') }}"><span class="glyphicon glyphicon-home"></span> Home</a></li>
+                          <li><a href="{{ url_for('login_page') }}"><i class="fas fa-user-circle"></i> Sign In</a></li>
+                      </ul>
+              {% endif %}
+          </div>
+      </div>
+  </nav>
+</div>
+{% endblock %}
+
+{% block body %}
+<br><br>
+<body style="background-color: #c09506;">
+  <div class="container" style="background-color: #000000; margin-top: 5%;">
+    <br><br>
+    <div class="table-responsive" style="margin-bottom: 5rem;">
+        <div class="col-sm-6">
+            <h2 style="background-color: #c09506; color: rgb(255, 255, 255); 
+                                        font-weight: 900; text-align: center; padding: 2rem;">FINDER</h2>
+            <h2 style="background-color: #c09506; color: rgb(255, 255, 255); 
+                                        font-weight: 900; text-align: center; padding: 3.13rem;">SEARCH YOUR STEAM GAME HERE</h2>
+            <h2 style="background-color: #c09506; color: rgb(255, 255, 255); 
+                                        font-weight: 900; text-align: center; padding: 3rem;">JUST ONE CLICK!</h2>
+        </div>
+        <div class="col-sm-3"></div>
+        <div class="col-sm-6">
+          <br>
+          <form action="" method="post" style="background-color: #9d1212; padding: 2.3rem;">
+            {{ form.hidden_tag() }}
+            <h3 style="color: white; text-align: center;font-weight: 700;">SEARCH</h3>
+            <br>
+            <!-- Error messages -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+              {% if messages %}
+                {% for category, msg in messages %}
+                  <div class="alert alert-{{ category }}" style="text-align: center;">
+                    <label>{{ msg }}</label> 
+                  </div>
+                {% endfor %}
+              {% endif %}
+            {% endwith %}
+              
+            {{ form.url.label(style="color: white;")}} <br>
+            {{ form.url(class="form-control", placeholder="https://example.com", style="background-color: black; color: white;") }} <br>
+            <br>
+            {{ form.submit(class="btn btn-secondary btn-block") }}
+            <br>
+          </form>
+          </div>
+        </div>
+    </div>
+</body>
+{% endblock %}
+
+{% block footer %}
+<!-- Footer -->
+<footer class="page-footer font-small unique-color-dark" style="margin-top: 10%; background-color: #000000;">
+  <br>
+  <!-- Copyright -->
+  <div class="footer-copyright text-center py-3">
+      <span class="glyphicon glyphicon-copyright-mark" style="color: white;"></span> 
+      <b style="color: white;">
+          &nbsp;SteamFinder <script>document.write(new Date().getFullYear())</script>
+      </b>
+  </div>
+</footer>
+{% endblock %}

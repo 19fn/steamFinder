@@ -1,0 +1,49 @@
+version: '3.8'
+services:
+  # MYSQL
+  mysql:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: brown.1087
+      MYSQL_DATABASE: steamfinder_db
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: SteamFinder2022
+    container_name: mysql
+    ports:
+        - "3306:3306"
+    restart: on-failure
+
+    volumes:
+        - "/opt/mysql_steam_finder:/var/lib/mysql"
+    
+    healthcheck:
+        test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+        interval: 30s
+        timeout: 10s
+        retries: 5
+
+  pma:
+    image: phpmyadmin:5
+    container_name: phpmyadmin
+
+    environment:
+            PMA_HOST: mysql
+            PMA_PORT: 3306
+            PMA_ARBITRARY: 1
+    ports:
+            - "8081:80"
+    restart: on-failure
+
+    volumes:
+            - "/opt/phpmyadmin_steam_finder/sessions:/sessions"
+            - "/opt/phpmyadmin_steam_finder/config.user.inc.php:/etc/phpmyadmin/config.user.inc.php"
+
+    healthcheck:
+            test: ["CMD-SHELL", "curl --fail http://localhost/ || exit 1"]
+            interval: 30s
+            timeout: 10s
+            retries: 5
+    
+    depends_on:
+            mysql:
+                    condition: service_healthy
